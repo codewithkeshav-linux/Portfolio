@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Secret Reel — Enter Password</title>
+  <style>
+    :root{
+      --bg1:#ff9a9e; /* warm gradient */
+      --bg2:#fad0c4;
+      --card:#ffffffee;
+      --accent:#ff6b81;
+      --glass: rgba(255,255,255,0.12);
+      --text:#222;
+      --success:#4ade80;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial}
+    body{
+      background: linear-gradient(135deg,var(--bg1),var(--bg2));
+      display:flex;align-items:center;justify-content:center;padding:24px;
+    }
+
+    .wrap{width:100%;max-width:480px}
+
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,0.18), rgba(255,255,255,0.06));
+      border-radius:18px;padding:18px;backdrop-filter: blur(6px);box-shadow:0 10px 30px rgba(12,12,12,0.12);
+    }
+
+    header{display:flex;gap:12px;align-items:center;margin-bottom:12px}
+    .logo{width:56px;height:56px;border-radius:12px;background:linear-gradient(45deg,var(--accent),#ffd1dc);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:20px}
+    h1{margin:0;font-size:18px;color:var(--text)}
+    p.sub{margin:4px 0 0;color:rgba(34,34,34,0.7);font-size:13px}
+
+    /* password overlay */
+    .locker{margin-top:12px;padding:18px;border-radius:12px;background:linear-gradient(180deg, rgba(0,0,0,0.06), rgba(255,255,255,0.02));}
+    .locker form{display:flex;gap:8px}
+    .locker input{flex:1;padding:12px 14px;border-radius:10px;border:1px solid rgba(0,0,0,0.06);font-size:15px}
+    .locker button{padding:12px 14px;border-radius:10px;border:0;background:var(--accent);color:white;font-weight:600;cursor:pointer}
+    .hint{font-size:12px;margin-top:8px;color:rgba(34,34,34,0.6)}
+
+    /* reel area */
+    .reel-wrap{margin-top:18px;display:flex;align-items:center;justify-content:center}
+    .reel{
+      width:320px;height:570px;border-radius:18px;overflow:hidden;position:relative;background:linear-gradient(180deg,#111 0%, #2b2b2b 100%);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.35);
+      transition:transform .45s cubic-bezier(.2,.9,.3,1),opacity .45s;
+      opacity:0.0;transform:translateY(12px) scale(.99);
+    }
+
+    .reel.visible{opacity:1;transform:translateY(0) scale(1)}
+    .reel video{width:100%;height:100%;object-fit:cover;display:block}
+
+    /* decorative overlay */
+    .reel .topbar{position:absolute;left:12px;top:12px;color:white;font-weight:700;display:flex;gap:8px;align-items:center}
+    .chip{background:var(--glass);padding:6px 8px;border-radius:10px;font-size:13px}
+
+    .replace-note{font-size:13px;margin-top:12px;color:rgba(34,34,34,0.7)}
+
+    /* success animation */
+    .success-msg{display:flex;gap:10px;align-items:center;margin-top:12px}
+    .dot{width:12px;height:12px;border-radius:50%;background:var(--success);box-shadow:0 6px 18px rgba(74,222,128,0.18)}
+
+    /* small responsive tweak */
+    @media (max-width:380px){
+      .reel{width:260px;height:460px}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <header>
+        <div class="logo">❤</div>
+        <div>
+          <h1>Private Reel</h1>
+          <p class="sub">Click enter password to open the reel — keep it secret 💌</p>
+        </div>
+      </header>
+
+      <div class="locker">
+        <form id="passForm" onsubmit="return false;">
+          <input id="pwd" type="password" placeholder="Enter password" autocomplete="off" />
+          <button id="openBtn">Enter</button>
+        </form>
+        <div class="hint">Tip: password is <strong>password</strong> (you can change it in the script)</div>
+      </div>
+
+      <div class="reel-wrap">
+        <div id="reelCard" class="reel" aria-hidden="true">
+          <div class="topbar"><div class="chip">Reel</div></div>
+          <video id="reelVideo" controls playsinline loop muted>
+            <source src="./video/1002 (2).mp4" type="video/mp4">
+            Your browser doesn't support HTML5 video.
+          </video>
+        </div>
+      </div>
+
+      <div class="replace-note">Replace <code>reel.mp4</code> with your own video file (same folder) or set the <code>src</code> to a hosted URL.</div>
+
+      <div id="success" class="success-msg" style="display:none">
+        <div class="dot"></div>
+        <div><strong>Unlocked!</strong> Enjoy your reel — replace the video anytime.</div>
+      </div>
+
+    </div>
+  </div>
+
+<script>
+(function(){
+  const correct = 'password'; // ← change password here if you want
+  const form = document.getElementById('passForm');
+  const input = document.getElementById('pwd');
+  const btn = document.getElementById('openBtn');
+  const reel = document.getElementById('reelCard');
+  const success = document.getElementById('success');
+  const video = document.getElementById('reelVideo');
+
+  function unlock(){
+    const v = input.value;
+    if(v === correct){
+      reel.classList.add('visible');
+      reel.setAttribute('aria-hidden','false');
+      success.style.display = 'flex';
+      input.value = '';
+      // autoplay attempt
+      setTimeout(()=>{
+        video.muted = false; // you can keep it muted if you prefer
+        video.play().catch(()=>{});
+      },300);
+    } else {
+      // small shake animation
+      btn.animate([{transform:'translateX(0)'},{transform:'translateX(-8px)'},{transform:'translateX(8px)'},{transform:'translateX(0)'}],{duration:360});
+      input.value = '';
+      input.focus();
+    }
+  }
+
+  form.addEventListener('submit',unlock);
+  btn.addEventListener('click',unlock);
+
+  // allow opening by pressing Enter in input
+  input.addEventListener('keydown',function(e){ if(e.key==='Enter'){unlock();} });
+
+  // accessibility: if user wants to replace video using JS
+  window.setReelSource = function(src){
+    if(!src) return;
+    video.pause();
+    video.querySelectorAll('source').forEach(s=>s.remove());
+    const s = document.createElement('source'); s.src = src; s.type = 'video/mp4';
+    video.appendChild(s);
+    video.load();
+  }
+})();
+</script>
+</body>
+</html>

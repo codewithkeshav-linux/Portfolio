@@ -1,0 +1,19 @@
+NAVBAR - FONT - KHAND - BOLD
+
+HELLO - FONT - JOST - BOLD  - SIZE 42
+
+KESHAV - FONT - KAND - BOLD - SIZE 90
+
+AND IAM - FONT - KAND - BOLD - SIZE 48 - LINE SPACING - 7%
+
+PARAGRAPH - FONT - KAND - MEDIUM - SIZE 24
+
+HIRE ME , CONTACT - BOLD - JOSEFIN SANS - SIZE 28
+
+DOWNLOAD - FONT - Anek Kannada - EXTRA BOLD - SIZE 28
+
+
+colour plate 
+
+#151925 - for background 
+#00E8FF - for highlight text
